@@ -32,16 +32,16 @@ app.use(cookieParser());
 app.use(cors({ origin: ["http://localhost:5173"] }));
 
 //Applicatin route
-// app.use("/api", router);
+app.use("/api", router);
 
 app.get("/", (req: Request, res: Response) => {
-  res.send("Hello from University Management");
+  res.send("Hello from Snoke Blog");
 
   // Promise.reject();
 });
 
 const server: Server = app.listen(serverPort, () => {
-  console.log(`UM is listening on ${serverPort}`);
+  console.log(`Snoke Blog is listening on ${serverPort}`);
 });
 
 //Global error handler
