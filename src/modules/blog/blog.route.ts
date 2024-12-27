@@ -1,8 +1,15 @@
 import express from "express";
 
 import { validateRequest } from "../../middlewares/validateData";
-import { blogCreationValidation } from "./blog.validation";
-import { createSingleBlog, deleteSingleBlog } from "./blog.controller";
+import {
+  blogCreationValidation,
+  updateBlogValidation,
+} from "./blog.validation";
+import {
+  createSingleBlog,
+  deleteSingleBlog,
+  updateSingleBlog,
+} from "./blog.controller";
 import { auth } from "../../middlewares/auth";
 import { USER_ROLE } from "../auth/auth.constant";
 
@@ -16,5 +23,12 @@ blogRoute.post(
 );
 
 blogRoute.delete("/:id", auth(USER_ROLE.admin), deleteSingleBlog);
+
+blogRoute.patch(
+  "/:id",
+  auth(USER_ROLE.user),
+  validateRequest(updateBlogValidation),
+  updateSingleBlog
+);
 
 export default blogRoute;

@@ -11,3 +11,6 @@ export const blogCreationValidation = z.object({
     required_error: "Blog Content must be required",
   }),
 });
+
+//Define blog update validation
+export const updateBlogValidation = blogCreationValidation.partial();

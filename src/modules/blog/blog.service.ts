@@ -33,6 +33,15 @@ export const createBlogIntoDB = async (
 
 // Delete single Blog data
 export const deleteSingleBlogFromDB = async (id: string) => {
+  const isBlogExist = await BlogModel.isBlogExist(id);
+
+  if (!isBlogExist)
+    throw new AppError(
+      404,
+      "Blog Not Found",
+      "The blog you are trying to update does not exist!"
+    );
+
   const result = await BlogModel.findByIdAndUpdate(
     id,
     {
@@ -46,4 +55,40 @@ export const deleteSingleBlogFromDB = async (id: string) => {
   void result;
 
   return null;
+};
+
+// Update single Blog data
+export const updateSingleBlogIntoDB = async (
+  id: string,
+  payload: Partial<IBlog>,
+  user: JwtPayload
+) => {
+  const isBlogExist = await BlogModel.isBlogExist(id);
+
+  if (!isBlogExist)
+    throw new AppError(
+      404,
+      "Blog Not Found",
+      "The blog you are trying to update does not exist!"
+    );
+
+  if (isBlogExist.author.toString() !== user.id.toString())
+    throw new AppError(401, "UnAuthorized", "You are not authorizedd !");
+
+  const result = await BlogModel.findByIdAndUpdate(id, payload, {
+    new: true,
+  }).populate("author");
+
+  if (!result)
+    throw new AppError(509, "Bad Request", "Failed to Update this Blog");
+
+  const { title, content, _id, author, ...restResult } = result.toObject();
+
+  void restResult;
+  return {
+    _id,
+    title,
+    content,
+    author,
+  };
 };
