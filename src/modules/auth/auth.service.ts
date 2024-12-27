@@ -2,7 +2,7 @@ import { ILoginUser, IUser } from "./auth.interface";
 import { UserModel } from "./auth.model";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { AppError } from "../../utils/error.class";
-import { createToken } from "./auth.utils";
+import { authenticateUser, createToken } from "./auth.utils";
 import {
   jwt_access_expire,
   jwt_access_secret,
@@ -33,17 +33,7 @@ export const createUserIntoDB = async (payload: Partial<IUser>) => {
 export const authenticateUserLogin = async (payload: ILoginUser) => {
   const foundUser = await UserModel.isUserExist(payload.email);
 
-  if (!foundUser)
-    throw new AppError(404, "Not Exist", "This user doesn't exist !");
-
-  if (foundUser.isBlocked)
-    throw new AppError(403, "Forbidden", "This user is blocked !");
-
-  // //password check
-  if (
-    !(await UserModel.isPasswordMatched(payload.password, foundUser.password))
-  )
-    throw new AppError(403, "Forbidden", "Passoword Not matched !");
+  await authenticateUser(foundUser, undefined, payload.password);
 
   const jwtPayload = {
     email: foundUser.email,
@@ -69,24 +59,13 @@ export const authenticateUserLogin = async (payload: ILoginUser) => {
 
 //Authenticate for refresh token
 export const getTokenByRefreshTokenFromBackend = async (token: string) => {
-  //Check if token is valid
   const decoded = jwt.verify(token, jwt_refresh_secret as string) as JwtPayload;
 
   const { email, iat } = decoded;
   //Check if the user has permission
   const foundUser = await UserModel.isUserExist(email);
 
-  if (!foundUser)
-    throw new AppError(404, "Not Exist", "This user doesn't exist !");
-
-  if (foundUser.isBlocked)
-    throw new AppError(403, "Forbidden", "This user is blocked !");
-
-  if (
-    foundUser.passwordChangedAt &&
-    UserModel.isJWTValidYet(foundUser.passwordChangedAt, iat as number)
-  )
-    throw new AppError(401, "UnAuthorized", "You are not authorized !");
+  await authenticateUser(foundUser, iat, undefined);
 
   const jwtPayload = {
     email: foundUser.email,
