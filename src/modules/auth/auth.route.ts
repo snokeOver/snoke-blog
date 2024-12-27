@@ -1,8 +1,21 @@
 import express from "express";
 
-import { userLoginValidation, userRegistrationValidation } from "./auth.zod";
-import { createUser, deleteSingleUser, loginUser } from "./auth.controller";
-import { validateRequest } from "../../middlewares/validateData";
+import {
+  refreshTokenValidation,
+  userLoginValidation,
+  userRegistrationValidation,
+} from "./auth.validation";
+import {
+  createUser,
+  deleteSingleUser,
+  getTokenByRefreshToken,
+  loginUser,
+} from "./auth.controller";
+
+import {
+  validateRequest,
+  validateTokenRequest,
+} from "../../middlewares/validateData";
 
 const authRoute = express.Router();
 
@@ -11,7 +24,14 @@ authRoute.post(
   validateRequest(userRegistrationValidation),
   createUser
 );
+
 authRoute.post("/login", validateRequest(userLoginValidation), loginUser);
+
+authRoute.post(
+  "/refresh-token",
+  validateTokenRequest(refreshTokenValidation),
+  getTokenByRefreshToken
+);
 
 authRoute.delete("/delete-user/:id", deleteSingleUser);
 

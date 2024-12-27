@@ -15,6 +15,11 @@ export interface IUser extends ILoginUser {
   __v?: number;
 }
 
+export interface IChangeUserPassword {
+  oldPassword: string;
+  newPassword: string;
+}
+
 export interface IUserModel extends Model<IUser> {
   isUserExist(email: string): Promise<IUser>;
   isPasswordMatched(password: string, hashedPass: string): Promise<boolean>;

@@ -1,6 +1,6 @@
 import { ILoginUser, IUser } from "./auth.interface";
 import { UserModel } from "./auth.model";
-
+import jwt, { JwtPayload } from "jsonwebtoken";
 import { AppError } from "../../utils/error.class";
 import { createToken } from "./auth.utils";
 import {
@@ -65,6 +65,40 @@ export const authenticateUserLogin = async (payload: ILoginUser) => {
     accessToken,
     refreshToken,
   };
+};
+
+//Authenticate for refresh token
+export const getTokenByRefreshTokenFromBackend = async (token: string) => {
+  //Check if token is valid
+  const decoded = jwt.verify(token, jwt_refresh_secret as string) as JwtPayload;
+
+  const { email, iat } = decoded;
+  //Check if the user has permission
+  const foundUser = await UserModel.isUserExist(email);
+
+  if (!foundUser)
+    throw new AppError(404, "Not Exist", "This user doesn't exist !");
+
+  if (foundUser.isBlocked)
+    throw new AppError(403, "Forbidden", "This user is blocked !");
+
+  if (
+    foundUser.passwordChangedAt &&
+    UserModel.isJWTValidYet(foundUser.passwordChangedAt, iat as number)
+  )
+    throw new AppError(401, "UnAuthorized", "You are not authorized !");
+
+  const jwtPayload = {
+    email: foundUser.email,
+    role: foundUser.role,
+  };
+  const accessToken = createToken(
+    jwtPayload,
+    jwt_access_secret as string,
+    jwt_access_expire as string
+  );
+
+  return { accessToken };
 };
 
 //delete a User from database

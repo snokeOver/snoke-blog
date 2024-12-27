@@ -30,3 +30,20 @@ export const userLoginValidation = z.object({
   password: passwordSchema,
   email: emailSchema,
 });
+
+//Validation for change password
+export const changePassValidation = z.object({
+  oldPassword: z.string({
+    required_error: "Old Password is required",
+  }),
+  newPassword: z.string({
+    required_error: "New Password is required",
+  }),
+});
+
+//Validation for retrieve token
+export const refreshTokenValidation = z.object({
+  refreshToken: z.string({
+    required_error: "Refresh Token is required",
+  }),
+});

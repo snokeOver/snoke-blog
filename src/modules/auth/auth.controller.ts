@@ -4,6 +4,7 @@ import {
   authenticateUserLogin,
   createUserIntoDB,
   deleteSingleUserFromDB,
+  getTokenByRefreshTokenFromBackend,
 } from "./auth.service";
 
 //Create a User data
@@ -34,6 +35,19 @@ export const loginUser = catchAsync(async (req, res) => {
     data: {
       accessToken,
     },
+  });
+});
+
+export const getTokenByRefreshToken = catchAsync(async (req, res) => {
+  const result = await getTokenByRefreshTokenFromBackend(
+    req.cookies.refreshToken
+  );
+
+  res.status(200).send({
+    success: true,
+    message: "Token by refresh token retrieve successfully",
+    statusCode: 200,
+    data: result,
   });
 });
 
