@@ -24,6 +24,10 @@ export const authenticateUser = async (
   if (foundUser.isBlocked)
     throw new AppError(403, "Forbidden", "This user is blocked !");
 
+  if (foundUser.isDeleted)
+    throw new AppError(403, "Forbidden", "This user is deleted !");
+
+  //Revalidate token
   if (
     foundUser.passwordChangedAt &&
     iat &&
@@ -31,7 +35,7 @@ export const authenticateUser = async (
   )
     throw new AppError(401, "UnAuthorized", "You are not authorized !");
 
-  // //password check
+  // //password validation
   if (
     plainPssword &&
     !(await UserModel.isPasswordMatched(plainPssword, foundUser.password))

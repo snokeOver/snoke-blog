@@ -26,6 +26,7 @@ const userSchema = new Schema<IUser, IUserModel>(
     passwordChangedAt: {
       type: Date,
       default: new Date(),
+      select: 0,
     },
 
     role: {
@@ -39,11 +40,13 @@ const userSchema = new Schema<IUser, IUserModel>(
     isBlocked: {
       type: Boolean,
       default: false,
+      select: 0,
     },
 
     isDeleted: {
       type: Boolean,
       default: false,
+      select: 0,
     },
   },
   {
@@ -64,24 +67,12 @@ userSchema.pre("save", async function () {
   this.password = await bcrypt.hash(this.password, Number(saltRound));
 });
 
-//To check if the user id exist or not before delete
-userSchema.pre("findOneAndUpdate", async function () {
-  const isUserExist = await UserModel.findOne(this.getQuery());
-  if (!isUserExist) {
-    throw new AppError(
-      404,
-      "User Not Found",
-      "The user you are trying to update does not exist!"
-    );
-  }
-});
-
 //static method
 userSchema.statics.isUserExist = async function (email: string) {
   return await UserModel.findOne({
     email,
     isDeleted: false,
-  }).select("+password");
+  }).select("+password +isBlocked");
 };
 
 userSchema.statics.isPasswordMatched = async function (
@@ -98,5 +89,17 @@ userSchema.statics.isJWTValidYet = function (
   const passwordChageTime = new Date(passChangedAt).getTime() / 1000;
   return passwordChageTime > jwtIssuedAt;
 };
+
+//To check if the user id exist or not before delete
+userSchema.pre("findOneAndUpdate", async function () {
+  const isUserExist = await UserModel.findOne(this.getQuery());
+  if (!isUserExist) {
+    throw new AppError(
+      404,
+      "User Not Found",
+      "The user you are trying to update does not exist!"
+    );
+  }
+});
 
 export const UserModel = model<IUser, IUserModel>("users", userSchema);

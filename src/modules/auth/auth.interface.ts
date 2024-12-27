@@ -1,4 +1,4 @@
-import { Model } from "mongoose";
+import { Model, Types } from "mongoose";
 import { USER_ROLE } from "./auth.constant";
 
 export interface ILoginUser {
@@ -13,6 +13,7 @@ export interface IUser extends ILoginUser {
   isBlocked?: boolean;
   isDeleted?: boolean;
   __v?: number;
+  _id?: Types.ObjectId;
 }
 
 export interface IChangeUserPassword {
