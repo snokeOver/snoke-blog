@@ -23,7 +23,7 @@ const blogSchema = new Schema<IBlog, IBlogModel>(
 
     isPublished: {
       type: Boolean,
-      default: false,
+      default: true,
       select: 0,
     },
 
@@ -62,15 +62,15 @@ blogSchema.statics.isBlogExist = async function (id: string) {
   }).select("+isPublished");
 };
 
-// blogSchema.pre("findOneAndUpdate", async function () {
-//   const isUserExist = await BlogModel.findOne(this.getQuery());
-//   if (!isUserExist) {
-//     throw new AppError(
-//       404,
-//       "Blog Not Found",
-//       "The blog you are trying to update does not exist!"
-//     );
-//   }
-// });
+blogSchema.pre("findOneAndUpdate", async function () {
+  const isBlogExist = await BlogModel.isBlogExist(this.getQuery()._id);
+  if (!isBlogExist) {
+    throw new AppError(
+      404,
+      "Blog Not Found",
+      "The blog you are trying to update does not exist!"
+    );
+  }
+});
 
 export const BlogModel = model<IBlog, IBlogModel>("blogs", blogSchema);

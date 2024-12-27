@@ -30,3 +30,20 @@ export const createBlogIntoDB = async (
     author,
   };
 };
+
+// Delete single Blog data
+export const deleteSingleBlogFromDB = async (id: string) => {
+  const result = await BlogModel.findByIdAndUpdate(
+    id,
+    {
+      isDeleted: true,
+    },
+    {
+      new: true,
+    }
+  );
+
+  void result;
+
+  return null;
+};
