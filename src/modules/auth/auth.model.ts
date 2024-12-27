@@ -77,9 +77,9 @@ userSchema.pre("findOneAndUpdate", async function () {
 });
 
 //static method
-userSchema.statics.isUserExist = async function (id: string) {
+userSchema.statics.isUserExist = async function (email: string) {
   return await UserModel.findOne({
-    id,
+    email,
     isDeleted: false,
   }).select("+password");
 };

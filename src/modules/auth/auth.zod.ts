@@ -1,21 +1,32 @@
 import { z } from "zod";
 
-export const userValidation = z.object({
+// Define reusable fields
+const emailSchema = z
+  .string({
+    invalid_type_error: "User email must be a string",
+    required_error: "User email must be required",
+  })
+  .email({
+    message: "Must be a valid email",
+  });
+
+const passwordSchema = z.string({
+  invalid_type_error: "User Password must be a string",
+  required_error: "User Password must be required",
+});
+
+// Define user creation validation
+export const userRegistrationValidation = z.object({
   name: z.string({
     invalid_type_error: "User Name must be a string",
     required_error: "User Name must be required",
   }),
-  password: z.string({
-    invalid_type_error: "User Password must be a string",
-    required_error: "User Password must be required",
-  }),
+  password: passwordSchema,
+  email: emailSchema,
+});
 
-  email: z
-    .string({
-      invalid_type_error: "User email must be a string",
-      required_error: "User email must be required",
-    })
-    .email({
-      message: "Must be valid email",
-    }),
+// Define user login validation using reusable schemas
+export const userLoginValidation = z.object({
+  password: passwordSchema,
+  email: emailSchema,
 });
