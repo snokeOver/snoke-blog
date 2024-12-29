@@ -92,14 +92,30 @@ userSchema.statics.isJWTValidYet = function (
 
 //To check if the user id exist or not before delete
 userSchema.pre("findOneAndUpdate", async function () {
-  const isUserExist = await UserModel.findOne(this.getQuery());
+  const isUserExist = await UserModel.findOne(this.getQuery()).select(
+    "+isDeleted +isBlocked"
+  );
   if (!isUserExist) {
     throw new AppError(
       404,
       "User Not Found",
-      "The user you are trying to update does not exist!"
+      "The user you are trying to access does not exist!"
     );
   }
+
+  if (isUserExist.isDeleted)
+    throw new AppError(
+      404,
+      "User Not Found",
+      "The user you are trying to access has already been deleted!"
+    );
+
+  if (isUserExist.isBlocked)
+    throw new AppError(
+      409,
+      "Already Blocked",
+      "The user you are trying to access has already been blocked!"
+    );
 });
 
 export const UserModel = model<IUser, IUserModel>("users", userSchema);

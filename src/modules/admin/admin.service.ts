@@ -3,7 +3,7 @@ import { BlogModel } from "../blog/blog.model";
 
 //delete a Blogs from database
 export const deleteSingleBlogByAdminFromDB = async (id: string) => {
-  const deletedUser = await BlogModel.findOneAndUpdate(
+  const deletedBlog = await BlogModel.findOneAndUpdate(
     { _id: id },
     {
       isDeleted: true,
@@ -13,12 +13,12 @@ export const deleteSingleBlogByAdminFromDB = async (id: string) => {
     }
   );
 
-  return deletedUser;
+  return deletedBlog;
 };
 
 //Block single user from database
 export const blockSingleUserByAdminIntoDB = async (id: string) => {
-  const deletedUser = await UserModel.findOneAndUpdate(
+  const blockedUser = await UserModel.findOneAndUpdate(
     { _id: id },
     {
       isBlocked: true,
@@ -26,7 +26,7 @@ export const blockSingleUserByAdminIntoDB = async (id: string) => {
     {
       new: true,
     }
-  );
+  ).select("+isBlocked");
 
-  return deletedUser;
+  return blockedUser;
 };
