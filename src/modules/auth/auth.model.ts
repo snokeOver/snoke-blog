@@ -116,6 +116,9 @@ userSchema.pre("findOneAndUpdate", async function () {
       "Already Blocked",
       "The user you are trying to access has already been blocked!"
     );
+
+  if (isUserExist.role === "admin")
+    throw new AppError(403, "Not Permitted", "You cann't block an admin");
 });
 
 export const UserModel = model<IUser, IUserModel>("users", userSchema);
