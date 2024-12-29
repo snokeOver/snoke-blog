@@ -118,7 +118,11 @@ userSchema.pre("findOneAndUpdate", async function () {
     );
 
   if (isUserExist.role === "admin")
-    throw new AppError(403, "Not Permitted", "You cann't block an admin");
+    throw new AppError(
+      403,
+      "Not Permitted",
+      "You cann't block or delete an admin"
+    );
 });
 
 export const UserModel = model<IUser, IUserModel>("users", userSchema);

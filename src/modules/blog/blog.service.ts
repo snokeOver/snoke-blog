@@ -34,18 +34,19 @@ export const createBlogIntoDB = async (
 };
 
 // Delete single Blog data
-export const deleteSingleBlogFromDB = async (id: string) => {
+export const deleteSingleBlogFromDB = async (id: string, user: JwtPayload) => {
   const isBlogExist = await BlogModel.isBlogExist(id);
 
-  if (!isBlogExist)
+  //Check ownership
+  if (isBlogExist.author.toString() !== user.id.toString())
     throw new AppError(
-      404,
-      "Blog Not Found",
-      "The blog you are trying to update does not exist!"
+      401,
+      "UnAuthorized",
+      "You are not the owner of this blog !"
     );
 
-  const result = await BlogModel.findByIdAndUpdate(
-    id,
+  const result = await BlogModel.findOneAndUpdate(
+    { _id: id },
     {
       isDeleted: true,
     },
@@ -67,18 +68,15 @@ export const updateSingleBlogIntoDB = async (
 ) => {
   const isBlogExist = await BlogModel.isBlogExist(id);
 
-  if (!isBlogExist)
-    throw new AppError(
-      404,
-      "Blog Not Found",
-      "The blog you are trying to update does not exist!"
-    );
-
   //Check ownership
   if (isBlogExist.author.toString() !== user.id.toString())
-    throw new AppError(401, "UnAuthorized", "You are not authorizedd !");
+    throw new AppError(
+      401,
+      "UnAuthorized",
+      "You are not the owner of this blog !"
+    );
 
-  const result = await BlogModel.findByIdAndUpdate(id, payload, {
+  const result = await BlogModel.findOneAndUpdate({ _id: id }, payload, {
     new: true,
   }).populate("author");
 

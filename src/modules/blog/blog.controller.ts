@@ -17,9 +17,9 @@ export const createSingleBlog = catchAsync(async (req, res) => {
   });
 });
 
-//Delete single blog by only admin
+//Delete single blog by only user the creator
 export const deleteSingleBlog = catchAsync(async (req, res) => {
-  const result = await deleteSingleBlogFromDB(req.params.id);
+  const result = await deleteSingleBlogFromDB(req.params.id, req.user);
   res.status(200).send({
     success: true,
     message: "Blog deleted successfully!",

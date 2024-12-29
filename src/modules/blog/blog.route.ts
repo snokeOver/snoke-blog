@@ -23,7 +23,7 @@ blogRoute.post(
   createSingleBlog
 );
 
-blogRoute.delete("/:id", auth(USER_ROLE.admin), deleteSingleBlog);
+blogRoute.delete("/:id", auth(USER_ROLE.user), deleteSingleBlog);
 
 blogRoute.patch(
   "/:id",

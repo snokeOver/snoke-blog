@@ -77,9 +77,7 @@ blogSchema.pre("findOneAndUpdate", async function () {
 blogSchema.statics.isBlogExist = async function (id: string) {
   return await BlogModel.findOne({
     _id: id,
-    isDeleted: false,
-    isPublished: true,
-  }).select("+isPublished");
+  }).select("+isPublished +isDeleted");
 };
 
 export const BlogModel = model<IBlog, IBlogModel>("blogs", blogSchema);
