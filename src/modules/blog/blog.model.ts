@@ -53,6 +53,26 @@ const blogSchema = new Schema<IBlog, IBlogModel>(
 
 //To check if the user id exist or not before delete
 
+//To check if the user id exist or not before delete
+blogSchema.pre("findOneAndUpdate", async function () {
+  const isBlogExist = await BlogModel.findOne(this.getQuery()).select(
+    "+isDeleted +isPublished"
+  );
+  if (!isBlogExist)
+    throw new AppError(
+      404,
+      "Blog Not Found",
+      "The Blog you are trying to access does not exist!"
+    );
+
+  if (isBlogExist.isDeleted)
+    throw new AppError(
+      404,
+      "Blog Not Found",
+      "The Blog you are trying to access has already been deleted!"
+    );
+});
+
 //static method
 blogSchema.statics.isBlogExist = async function (id: string) {
   return await BlogModel.findOne({
