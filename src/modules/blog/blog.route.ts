@@ -8,6 +8,7 @@ import {
 import {
   createSingleBlog,
   deleteSingleBlog,
+  getAlleBlogs,
   updateSingleBlog,
 } from "./blog.controller";
 import { auth } from "../../middlewares/auth";
@@ -30,5 +31,7 @@ blogRoute.patch(
   validateRequest(updateBlogValidation),
   updateSingleBlog
 );
+
+blogRoute.get("/", getAlleBlogs);
 
 export default blogRoute;

@@ -2,6 +2,7 @@ import { catchAsync } from "../../utils/catchAsync";
 import {
   createBlogIntoDB,
   deleteSingleBlogFromDB,
+  getAllBlogsFromDB,
   updateSingleBlogIntoDB,
 } from "./blog.service";
 
@@ -37,6 +38,17 @@ export const updateSingleBlog = catchAsync(async (req, res) => {
   res.status(200).send({
     success: true,
     message: "Blog updated successfully!",
+    statusCode: 200,
+    data: result,
+  });
+});
+
+//Get all blogs for mango people
+export const getAlleBlogs = catchAsync(async (req, res) => {
+  const result = await getAllBlogsFromDB(req.query);
+  res.status(200).send({
+    success: true,
+    message: "All blogs retrieved successfully!",
     statusCode: 200,
     data: result,
   });
