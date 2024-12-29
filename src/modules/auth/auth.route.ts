@@ -33,6 +33,7 @@ authRoute.post(
   getTokenByRefreshToken
 );
 
+//either delete/block/both will be implemented
 authRoute.delete("/delete-user/:id", deleteSingleUser);
 
 export default authRoute;
