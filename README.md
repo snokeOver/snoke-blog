@@ -168,6 +168,7 @@ Example Error Response:
 
 	"message": "Validation failed",
 	"success": false,
+   "statusCode":200,
 	"errors": {
 		"email": "Email is already in use",
 		"password": "Password must be at least 8 characters"
@@ -230,8 +231,7 @@ Contributions, issues, and feature requests are welcome! Feel free to check the 
 ## 👨‍💻 Author
 
 **Shubhankar Halder**
-
-#### Software Engineer, Nagorik Technology Ltd.
+**_ Software Engineer, Nagorik Technology Ltd._**
 
 ###### MERN, TypeScript, Next.js, Node.js | Crafting user-friendly, secure, scalable Web Apps | Passionate about Software Engineering
 
