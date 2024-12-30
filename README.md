@@ -1,32 +1,44 @@
-# 🛒 Snoke Blog API
+# ✍️ Snoke Blog Platform API
 
-This project is a TypeScript-based Express application designed to manage a Blog app by visitors, user and admin role based access. It integrates MongoDB using Mongoose for database operations and ensures data integrity through zod and schema validation.
+This project is a TypeScript-based Express application designed to manage a blogging platform where Loged in users can create blog. The creator of the blog while logged in can update, and delete their own blogs. It integrates MongoDB using Mongoose for database operations and ensures data integrity through schema validation. The platform features role-based access control, secure authentication, and a public API for exploring blogs with search, sorting, and filtering functionalities.
 
 ## 🚀 Features
 
-1. **Stationery Product Management**:
+1. **User Management**:
 
-   - Create, retrieve, update, and delete products.
-   - Query products by name, brand, or category.
+   - Register and login functionality for users.
+   - Role-based access control (Admin and User roles).
+   - Admin can block users and manage their blogs.
 
-2. **Order Management**:
+2. **Blog Management**:
 
-   - Place orders and manage inventory in real-time.
-   - Automatic inventory updates upon order placement.
-   - Prevent orders when stock is insufficient.
+   - Users can create, retrieve, update, and delete their own blogs.
+   - Admins can delete any blog.
+   - Blogs include title, content, author details, and timestamps.
 
-3. **Revenue Calculation**:
-   - Aggregate total revenue from all orders placed.
-4. **Data Validation**:
-   - Enforced using Mongoose schema validation.
-5. **Error Handling**:
+3. **Public Blog API**:
 
-   - Generic error responses with clear messages.
-   - Validation for input data and inventory checks.
+   - Fetch blogs with options for search, sorting, and filtering.
+   - Search by title or content.
+   - Sort blogs by created date, title, or other fields in ascending/descending order.
 
-6. **API Structure**:
+4. **Authentication & Authorization**:
+
+   - Secure authentication using JWT.
+   - Authorization to ensure users can only perform actions permitted by their roles.
+
+5. **Data Validation**:
+
+   - Enforced using Mongoose and zod validation schema.
+
+6. **Error Handling**:
+
+   - Unified error responses with meaningful messages.
+   - Handles validation errors, authentication errors, and authorization errors.
+
+7. **API Structure**:
    - Consistent and RESTful API endpoints.
-   - Comprehensive response formats for success and failure.
+   - Detailed success and error response formats for all API operations.
 
 ## 🛠️ Technologies Used
 
@@ -34,68 +46,134 @@ This project is a TypeScript-based Express application designed to manage a Blog
 - **Programming Language**: TypeScript
 - **Database**: MongoDB
 - **ORM**: Mongoose
+- **Authentication**: JSON Web Tokens (JWT)
 - **Validation**: Mongoose Schema Validation
 
 ## 📂 Project Structure
 
-![Folder Structure](/assets/structure.PNG)
+```js
+blog-project/
+├── src/
+│   ├── builder/
+│   │   └── QueryBuilder.ts          # Utility for building query strings
+│   ├── middlewares/
+│   │   ├── auth.ts                  # Middleware for authentication
+│   │   ├── errorHandler.ts          # Centralized error handling logic
+│   │   ├── handleCastError.ts       # Error handling for invalid object casting
+│   │   ├── handleDuplicateError.ts  # Error handling for duplicate keys
+│   │   ├── handleStrictMode.ts      # Strict mode error handler
+│   │   ├── handleValidationError.ts # Error handling for validation errors
+│   │   ├── handleZodError.ts        # Zod validation error handler
+│   │   ├── notFound.ts              # Middleware for handling 404 errors
+│   │   └── validateData.ts          # Middleware for data validation
+│   ├── modules/
+│   │   ├── admin/
+│   │   │   ├── admin.controller.ts  # Controller logic for admin module
+│   │   │   ├── admin.route.ts       # API routes for admin module
+│   │   │   └── admin.service.ts     # Business logic for admin module
+│   │   ├── auth/
+│   │   │   ├── auth.constant.ts     # Constants for authentication module
+│   │   │   ├── auth.controller.ts   # Controller logic for authentication module
+│   │   │   ├── auth.interface.ts    # TypeScript interfaces for authentication
+│   │   │   ├── auth.model.ts        # Mongoose schema for authentication
+│   │   │   ├── auth.route.ts        # API routes for authentication module
+│   │   │   ├── auth.service.ts      # Business logic for authentication
+│   │   │   ├── auth.utils.ts        # Utility functions for authentication
+│   │   │   └── auth.validation.ts   # Validation logic for authentication
+│   │   └── blog/
+│   │       ├── blog.constant.ts     # Constants for blog module
+│   │       ├── blog.controller.ts   # Controller logic for blog module
+│   │       ├── blog.interface.ts    # TypeScript interfaces for blog
+│   │       ├── blog.model.ts        # Mongoose schema for blog
+│   │       ├── blog.route.ts        # API routes for blog module
+│   │       ├── blog.service.ts      # Business logic for blog
+│   │       ├── blog.utils.ts        # Utility functions for blog module
+│   │       └── blog.validation.ts   # Validation logic for blog module
+│   ├── routes/
+│   │   ├── index.ts                 # Main application routes
+│   │   └── routes.ts                # Additional route definitions
+│   ├── types-interface/
+│   │   ├── defined.interface.ts     # Defined TypeScript interfaces
+│   │   ├── err.ts                   # Error-related types or utilities
+│   │   └── typesInterface.ts        # Additional interface types
+│   ├── utils/
+│   │   ├── catchAsync.ts            # Utility for handling async functions with error handling
+│   │   └── error.class.ts           # Custom error class
+├── .env                              # Environment variables
+├── package.json                      # Node.js dependencies and scripts
+├── tsconfig.json                     # TypeScript configuration
+└── README.md                         # Documentation
+
+```
 
 ## 🧩 Models Overview
 
-### **Stationery Product Model**
+### **User Model**
 
-| Field         | Type      | Description                              |
-| ------------- | --------- | ---------------------------------------- |
-| `name`        | `string`  | Name of the product.                     |
-| `brand`       | `string`  | Brand of the product.                    |
-| `price`       | `number`  | Price of the product.                    |
-| `category`    | `enum`    | Category: Writing, Office Supplies, etc. |
-| `description` | `string`  | Brief description of the product.        |
-| `quantity`    | `number`  | Available quantity.                      |
-| `inStock`     | `boolean` | Whether the product is in stock.         |
+| Field       | Type      | Description                              |
+| ----------- | --------- | ---------------------------------------- |
+| `name`      | `string`  | Name of the user.                        |
+| `email`     | `string`  | User's email address (unique).           |
+| `password`  | `string`  | Encrypted password of the user.          |
+| `role`      | `enum`    | Role of the user (`Admin` or `User`).    |
+| `isBlocked` | `boolean` | Indicates if the user is blocked.        |
+| `createdAt` | `Date`    | Timestamp for when the user was created. |
+| `updatedAt` | `Date`    | Timestamp for the last update.           |
 
-### **Order Model**
+### **Blog Model**
 
-| Field        | Type       | Description                                |
-| ------------ | ---------- | ------------------------------------------ |
-| `email`      | `string`   | Customer's email address.                  |
-| `product`    | `ObjectId` | The product ordered (referencing Product). |
-| `quantity`   | `number`   | Quantity of the product ordered.           |
-| `totalPrice` | `number`   | Total price of the order.                  |
+| Field         | Type       | Description                              |
+| ------------- | ---------- | ---------------------------------------- |
+| `title`       | `string`   | Title of the blog.                       |
+| `content`     | `string`   | Main content of the blog.                |
+| `author`      | `ObjectId` | Reference to the User who created it.    |
+| `createdAt`   | `Date`     | Timestamp for when the blog was created. |
+| `updatedAt`   | `Date`     | Timestamp for the last update.           |
+| `isPublished` | `boolean`  | Whether the blog is published or not.    |
 
 ## 📋 API Endpoints
 
-### **Stationery Products**
+### **Users**
 
-| Method | Endpoint                   | Description                  |
-| ------ | -------------------------- | ---------------------------- |
-| POST   | `/api/products`            | Create a new product.        |
-| GET    | `/api/products`            | Retrieve all products.       |
-| GET    | `/api/products/:productId` | Retrieve a specific product. |
-| PUT    | `/api/products/:productId` | Update a product.            |
-| DELETE | `/api/products/:productId` | Delete a product.            |
+| Method | Endpoint              | Description                       |
+| ------ | --------------------- | --------------------------------- |
+| POST   | `/api/users/register` | Register a new user.              |
+| POST   | `/api/users/login`    | User login to receive a token.    |
+| GET    | `/api/users/profile`  | Retrieve user profile (auth req). |
+| PUT    | `/api/users/:userId`  | Update user details.              |
+| DELETE | `/api/users/:userId`  | Delete a user account.            |
 
-### **Orders**
+### **Blogs**
 
-| Method | Endpoint              | Description                          |
-| ------ | --------------------- | ------------------------------------ |
-| POST   | `/api/orders`         | Place a new order.                   |
-| GET    | `/api/orders/revenue` | Calculate total revenue from orders. |
+| Method | Endpoint                    | Description                              |
+| ------ | --------------------------- | ---------------------------------------- |
+| POST   | `/api/blogs`                | Create a new blog post.                  |
+| GET    | `/api/blogs`                | Retrieve all blog posts.                 |
+| GET    | `/api/blogs/:blogId`        | Retrieve a specific blog post.           |
+| PUT    | `/api/blogs/:blogId`        | Update a blog post.                      |
+| DELETE | `/api/blogs/:blogId`        | Delete a blog post.                      |
+| GET    | `/api/blogs/author/:userId` | Retrieve all blogs by a specific author. |
 
 ## 🛡️ Error Handling
 
 - **Validation Errors**: Detailed messages for invalid inputs.
-- **Resource Not Found**: 404 errors for missing products or orders.
-- **Insufficient Stock**: Prevents orders exceeding available inventory.
+- **Resource Not Found**: 404 errors for missing users, blog posts, or invalid endpoints.
+- **Authentication Errors**: 401 errors for unauthorized access to protected routes.
+- **Duplicate Entry**: Prevents the creation of duplicate users or blogs with conflicting data.
 
 Example Error Response:
 
 ```js
 {
+
 	"message": "Validation failed",
 	"success": false,
-	"error": { ... },
+	"errors": {
+		"email": "Email is already in use",
+		"password": "Password must be at least 8 characters"
+	},
 	"stack": "Error trace..."
+
 }
 ```
 
@@ -103,15 +181,15 @@ Example Error Response:
 
 - Node.js (v16+)
 - MongoDB (Atlas or Local)
-- npm (or yarn)
+- npm
 
 ## 🔧 Setup
 
 1. Clone the repository:
 
-   `git clone https://github.com/snokeOver/stationary-shop.git`
+   `git clone https://github.com/snokeOver/snoke-blog.git`
 
-   `cd stationary-shop`
+   `cd snoke-blog`
 
 2. Install dependencies:
 
@@ -122,10 +200,13 @@ Example Error Response:
    Create a `.env` file with the following values:
 
    `SERVER_PORT=5000`
-
    `MONGODB_URL=your_mongodb_connection_string`
-
    `NODE_ENV=development`
+   `SALT_ROUND=Your_Preferred_Round`
+   `JWT_SECRET=Your_Preferred_JWT_Secret`
+   `JWT_REFRESH_SECRET=Your_JWT_Refresh_Secret`
+   `JWT_ACCESS_EXPIRES_IN=Your_Preferred_Time`
+   `JWT_REFRESH_EXPIRES_IN=Your_Preferred_Time`
 
 4. Start the application:
 
@@ -135,8 +216,8 @@ Example Error Response:
 
 ## 🖥️ Deployment
 
-- Deployed Link: [Live Demo](https://stationary-shop-snoke.vercel.app/)
-- GitHub Repository: [Stationery Shop](https://github.com/snokeOver/stationary-shop)
+- Deployed Link: [Live Demo](https://snoke-blog.vercel.app/)
+- GitHub Repository: [Stationery Shop](https://github.com/snokeOver/snoke-blog)
 
 ## 🎥 Video Walkthrough
 
@@ -150,7 +231,9 @@ Contributions, issues, and feature requests are welcome! Feel free to check the 
 
 **Shubhankar Halder**
 
-###### MERN, TypeScript, Next.js, Node.js, MongoDB | Crafting user-friendly, secure, scalable Web Apps | Passionate about Software Engineering
+#### Software Engineer, Nagorik Technology Ltd.
+
+###### MERN, TypeScript, Next.js, Node.js | Crafting user-friendly, secure, scalable Web Apps | Passionate about Software Engineering
 
 - GitHub: [@snokeOver](https://github.com/snokeOver)
 - LinkedIn: [Shubhankar Halder](https://www.linkedin.com/in/shubhankar-halder/)
