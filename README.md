@@ -165,16 +165,14 @@ Example Error Response:
 
 ```js
 {
-
-	"message": "Validation failed",
-	"success": false,
-   "statusCode":200,
-	"errors": {
-		"email": "Email is already in use",
-		"password": "Password must be at least 8 characters"
-	},
-	"stack": "Error trace..."
-
+   "message": "Validation failed",
+   "success": false,
+   "statusCode":200,
+   "errors": {
+      "email": "Email is already in use",
+      "password": "Password must be at least 8 characters"
+   },
+   "stack": "Error trace..."
 }
 ```
 
