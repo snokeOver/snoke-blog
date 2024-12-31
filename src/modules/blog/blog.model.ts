@@ -58,6 +58,7 @@ blogSchema.pre("findOneAndUpdate", async function () {
   const isBlogExist = await BlogModel.findOne(this.getQuery()).select(
     "+isDeleted +isPublished"
   );
+
   if (!isBlogExist)
     throw new AppError(
       404,

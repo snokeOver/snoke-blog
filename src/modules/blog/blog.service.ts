@@ -38,7 +38,7 @@ export const deleteSingleBlogFromDB = async (id: string, user: JwtPayload) => {
   const isBlogExist = await BlogModel.isBlogExist(id);
 
   //Check ownership
-  if (isBlogExist.author.toString() !== user.id.toString())
+  if (isBlogExist?.author?.toString() !== user?.id?.toString())
     throw new AppError(
       401,
       "UnAuthorized",
@@ -68,8 +68,15 @@ export const updateSingleBlogIntoDB = async (
 ) => {
   const isBlogExist = await BlogModel.isBlogExist(id);
 
+  if (!isBlogExist)
+    throw new AppError(
+      404,
+      "Blog Not Found",
+      "The Blog you are trying to access does not exist!"
+    );
+
   //Check ownership
-  if (isBlogExist.author.toString() !== user.id.toString())
+  if (isBlogExist?.author?.toString() !== user?.id?.toString())
     throw new AppError(
       401,
       "UnAuthorized",
