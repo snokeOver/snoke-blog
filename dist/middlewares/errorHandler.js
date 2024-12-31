@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.errorHandler = void 0;
-const __1 = require("..");
 const handleZodError_1 = require("./handleZodError");
 const handleValidationError_1 = require("./handleValidationError");
 const handleStrictMode_1 = require("./handleStrictMode");
@@ -73,8 +72,15 @@ const errorHandler = (err, req, res, next) => {
     else {
         errorMsg = err.message || "Server error";
     }
-    const response = Object.assign(Object.assign({ success: false, message: errorMsg, statusCode,
-        error }, (__1.nodeEnv === "development" && { stack: err === null || err === void 0 ? void 0 : err.stack })), { showError: err });
+    const response = {
+        success: false,
+        message: errorMsg,
+        statusCode,
+        error,
+        stack: err === null || err === void 0 ? void 0 : err.stack,
+        // ...(nodeEnv === "development" && { stack: err?.stack }),
+        // showError: err,
+    };
     res.status(statusCode).send(response);
     void next;
 };

@@ -46,9 +46,10 @@ const createBlogIntoDB = (payload, user) => __awaiter(void 0, void 0, void 0, fu
 exports.createBlogIntoDB = createBlogIntoDB;
 // Delete single Blog data
 const deleteSingleBlogFromDB = (id, user) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b;
     const isBlogExist = yield blog_model_1.BlogModel.isBlogExist(id);
     //Check ownership
-    if (isBlogExist.author.toString() !== user.id.toString())
+    if (((_a = isBlogExist === null || isBlogExist === void 0 ? void 0 : isBlogExist.author) === null || _a === void 0 ? void 0 : _a.toString()) !== ((_b = user === null || user === void 0 ? void 0 : user.id) === null || _b === void 0 ? void 0 : _b.toString()))
         throw new error_class_1.AppError(401, "UnAuthorized", "You are not the owner of this blog !");
     const result = yield blog_model_1.BlogModel.findOneAndUpdate({ _id: id }, {
         isDeleted: true,
@@ -61,16 +62,19 @@ const deleteSingleBlogFromDB = (id, user) => __awaiter(void 0, void 0, void 0, f
 exports.deleteSingleBlogFromDB = deleteSingleBlogFromDB;
 // Update single Blog data
 const updateSingleBlogIntoDB = (id, payload, user) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b;
     const isBlogExist = yield blog_model_1.BlogModel.isBlogExist(id);
+    if (!isBlogExist)
+        throw new error_class_1.AppError(404, "Blog Not Found", "The Blog you are trying to access does not exist!");
     //Check ownership
-    if (isBlogExist.author.toString() !== user.id.toString())
+    if (((_a = isBlogExist === null || isBlogExist === void 0 ? void 0 : isBlogExist.author) === null || _a === void 0 ? void 0 : _a.toString()) !== ((_b = user === null || user === void 0 ? void 0 : user.id) === null || _b === void 0 ? void 0 : _b.toString()))
         throw new error_class_1.AppError(401, "UnAuthorized", "You are not the owner of this blog !");
     const result = yield blog_model_1.BlogModel.findOneAndUpdate({ _id: id }, payload, {
         new: true,
     }).populate("author");
     if (!result)
         throw new error_class_1.AppError(509, "Bad Request", "Failed to Update this Blog");
-    const _a = result.toObject(), { title, content, _id, author } = _a, restResult = __rest(_a, ["title", "content", "_id", "author"]);
+    const _c = result.toObject(), { title, content, _id, author } = _c, restResult = __rest(_c, ["title", "content", "_id", "author"]);
     void restResult;
     return {
         _id,
