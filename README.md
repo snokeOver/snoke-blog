@@ -220,7 +220,7 @@ Example Error Response:
 
 ## 🎥 Video Walkthrough
 
-Watch the API walkthrough: [Video Explanation](https://drive.google.com/file/d/1zrUaz9p_1wLizJyeCNaxxy9f-x3_VcWU/view?usp=sharing)
+Watch the API walkthrough: [Video Explanation](https://drive.google.com/file/d/1FIHbVR16kNgFf3kCnRkjUDXG4psIwZ5B/view?usp=sharing)
 
 ## 🤝 Contributing
 
