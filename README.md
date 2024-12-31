@@ -216,7 +216,7 @@ Example Error Response:
 ## 🖥️ Deployment
 
 - Deployed Link: [Live Demo](https://snoke-blog.vercel.app/)
-- GitHub Repository: [Stationery Shop](https://github.com/snokeOver/snoke-blog)
+- GitHub Repository: [Snoke Blog](https://github.com/snokeOver/snoke-blog)
 
 ## 🎥 Video Walkthrough
 
